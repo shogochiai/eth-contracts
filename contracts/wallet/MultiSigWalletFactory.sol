@@ -6,6 +6,8 @@ import "./MultiSigWallet.sol";
 /// @title Multisignature wallet factory - Allows creation of multisig wallet.
 /// @author Stefan George - <stefan.george@consensys.net>
 contract MultiSigWalletFactory is Factory {
+  uint constant public version = 1;
+
   /// @dev Allows verified creation of multisignature wallet.
   /// @param _owners List of initial owners.
   /// @param _required Number of required confirmations.

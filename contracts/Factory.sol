@@ -8,7 +8,7 @@ contract Factory is Ownable {
   // contract maps
   mapping(address => bool) public contractMap;
   // user->contracts mapping
-  mapping(address => address[]) public contracts;
+  mapping(address => address[]) public userContracts;
 
   // Event contract created
   event ContractCreated(address _sender, address _address);
@@ -36,7 +36,7 @@ contract Factory is Ownable {
   /// @param creator Contract creator.
   /// @return Returns number of contracts by creator.
   function getContractCount(address creator) public constant returns (uint) {
-    return contracts[creator].length;
+    return userContracts[creator].length;
   }
 
   /// @dev Registers contract in factory registry.
@@ -45,7 +45,7 @@ contract Factory is Ownable {
     require(contractMap[_address] != true);
 
     contractMap[_address] = true;
-    contracts[msg.sender].push(_address);
+    userContracts[msg.sender].push(_address);
     ContractCreated(msg.sender, _address);
   }
 

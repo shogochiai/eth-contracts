@@ -1,14 +1,14 @@
 import assertThrows from "./helpers/assertThrows";
 
-let MultiSigWalletFactory = artifacts.require("./wallet/MultiSigWalletFactory.sol");
-let MultiSigWallet = artifacts.require("./wallet/MultiSigWallet.sol");
+let RegistryFactory = artifacts.require("./registry/RegistryFactory.sol");
+let Registry = artifacts.require("./registry/Registry.sol");
 
-contract('MultiSigWalletFactory', function(accounts) {
+contract('RegistryFactory', function(accounts) {
   describe('initialization', async function() {
     let factory;
 
     beforeEach(async function(){
-      factory = await MultiSigWalletFactory.new({from: accounts[0]});
+      factory = await RegistryFactory.new({from: accounts[0]});
     });
 
     it('should create contract with proper owner and should allow to update', async function() {
@@ -45,12 +45,12 @@ contract('MultiSigWalletFactory', function(accounts) {
     let factory;
 
     beforeEach(async function(){
-      factory = await MultiSigWalletFactory.new({from: accounts[0]});
+      factory = await RegistryFactory.new({from: accounts[0]});
     });
 
-    it('should anyone to create MultiSigWallet contract', async function() {
+    it('should anyone to create Registry contract', async function() {
       let fee = web3.toWei(0, 'ether');
-      let receipt = await factory.create(accounts.slice(0, 2), 1, {value: fee}); // with zero fee
+      let receipt = await factory.create({value: fee}); // with zero fee
       assert.equal(receipt.logs.length, 1);
       assert.equal(receipt.logs[0].event, 'ContractCreated');
       assert.equal(receipt.logs[0].args._sender, accounts[0]);
@@ -59,13 +59,9 @@ contract('MultiSigWalletFactory', function(accounts) {
       let count = await factory.getContractCount(accounts[0]);
       assert.equal(count.toNumber(), 1)
 
-      // wallet address from event
-      let walletAddress = receipt.logs[0].args._address;
-      let walletContract = MultiSigWallet.at(walletAddress);
-
-      // check wallet's requirements
-      assert.deepEqual(await walletContract.getOwners(), accounts.slice(0, 2));
-      assert.equal(await walletContract.required(), 1);
+      // registry address from event
+      let registryAddress = receipt.logs[0].args._address;
+      let registryContract = Registry.at(registryAddress);
     });
 
     it('should not allow to create with lesser fees', async function() {
@@ -78,7 +74,7 @@ contract('MultiSigWalletFactory', function(accounts) {
       assert.equal(feeReceipt.logs[0].event, 'FeeChanged');
       assert.equal(feeReceipt.logs[0].args.newFee.toString(), newFee.toString());
 
-      assertThrows(factory.create(accounts.slice(0, 2), 1, {value: fee}));
+      assertThrows(factory.create({value: fee}));
     });
 
     it('should allow to create with more or same fees', async function() {
@@ -91,7 +87,7 @@ contract('MultiSigWalletFactory', function(accounts) {
       assert.equal(feeReceipt.logs[0].event, 'FeeChanged');
       assert.equal(feeReceipt.logs[0].args.newFee.toString(), newFee.toString());
 
-      let receipt = await factory.create(accounts.slice(0, 2), 1, {value: newFee});
+      let receipt = await factory.create({value: newFee});
       assert.equal(receipt.logs.length, 1);
       assert.equal(receipt.logs[0].event, 'ContractCreated');
       assert.equal(receipt.logs[0].args._sender, accounts[0]);
@@ -100,13 +96,9 @@ contract('MultiSigWalletFactory', function(accounts) {
       let count = await factory.getContractCount(accounts[0]);
       assert.equal(count.toNumber(), 1)
 
-      // wallet address from event
-      let walletAddress = receipt.logs[0].args._address;
-      let walletContract = MultiSigWallet.at(walletAddress);
-
-      // check wallet's requirements
-      assert.deepEqual(await walletContract.getOwners(), accounts.slice(0, 2));
-      assert.equal(await walletContract.required(), 1);
+      // contract address from event
+      let registryAddress = receipt.logs[0].args._address;
+      let registryContract = Registry.at(registryAddress);
 
       // check factory balance
       let shouldBalance = web3.toWei(1, 'ether');
@@ -119,12 +111,12 @@ contract('MultiSigWalletFactory', function(accounts) {
     let factory;
 
     beforeEach(async function(){
-      factory = await MultiSigWalletFactory.new({from: accounts[0]});
+      factory = await RegistryFactory.new({from: accounts[0]});
       await factory.updateFee(web3.toWei(1, 'ether'));
     });
 
     it('should allow owner to withdraw fund', async function() {
-      assertThrows(factory.create(accounts.slice(0, 2), 1));
+      assertThrows(factory.create());
 
       // get account balance
       let accountBalance = web3.eth.getBalance(accounts[0]);
@@ -137,7 +129,7 @@ contract('MultiSigWalletFactory', function(accounts) {
       ];
       for (let i = 0; i < testData.length; i++) {
         // create contract with fee 1 ETH
-        let createReceipt = await factory.create(accounts.slice(0, 2), 1, testData[i]);
+        let createReceipt = await factory.create(testData[i]);
         assert.equal(createReceipt.logs.length, 1);
         assert.equal(createReceipt.logs[0].event, 'ContractCreated');
 
@@ -162,9 +154,9 @@ contract('MultiSigWalletFactory', function(accounts) {
     });
 
     it('should not allow other to withdraw fund', async function() {
-      assertThrows(factory.create(accounts.slice(0, 2), 1));
+      assertThrows(factory.create());
 
-      let createReceipt = await factory.create(accounts.slice(0, 2), 1, {value: web3.toWei(1, 'ether')});
+      let createReceipt = await factory.create({value: web3.toWei(1, 'ether')});
       assert.equal(createReceipt.logs.length, 1);
       assert.equal(createReceipt.logs[0].event, 'ContractCreated');
 

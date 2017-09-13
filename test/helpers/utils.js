@@ -1,3 +1,5 @@
+import eutils from 'ethereumjs-util';
+
 export function getFunctionSelector (functionSignature) {
   // no spaces
   functionSignature = functionSignature.replace(/ /g, '');
@@ -30,3 +32,16 @@ export function mineToBlockHeight (targetBlockHeight) {
     mineOneBlock();
   }
 };
+
+export function namehash (name) {
+  let node = eutils.addHexPrefix(Array(64).join('0'));
+  if (name) {
+    const labels = name.split('.');
+    for (let i = labels.length - 1; i >= 0; i -= 1) {
+      const labelSha = eutils.sha3(labels[i]).toString('hex');
+      node = eutils.addHexPrefix(eutils.sha3(node + labelSha).toString('hex'));
+    }
+  }
+
+  return node;
+}

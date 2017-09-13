@@ -1,10 +1,9 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.15;
 
 import "./mixin/Ownable.sol";
+import "./mixin/PaidContract.sol";
 
-contract Factory is Ownable {
-  uint public fee;
-
+contract Factory is Ownable, PaidContract {
   // contract maps
   mapping(address => bool) public contractMap;
   // user->contracts mapping
@@ -12,25 +11,6 @@ contract Factory is Ownable {
 
   // Event contract created
   event ContractCreated(address _sender, address _address);
-  event FeeChanged(uint newFee);
-  event FundWithdraw(uint amount);
-
-  //
-  // Modifiers
-  //
-
-  // Only if amount value is greater than/equals to decided fee
-  modifier enoughPaid() {
-    require(msg.value >= fee);
-    _;
-  }
-
-  /// @dev Set fee for contract creation
-  /// @param _fee for contract creation
-  function updateFee(uint _fee) public onlyOwner {
-    fee = _fee;
-    FeeChanged(fee);
-  }
 
   /// @dev Returns number of contracts by creator.
   /// @param creator Contract creator.
@@ -47,12 +27,5 @@ contract Factory is Ownable {
     contractMap[_address] = true;
     userContracts[msg.sender].push(_address);
     ContractCreated(msg.sender, _address);
-  }
-
-  /// @dev Withdraw collected fees
-  function withdraw() public onlyOwner {
-    uint balance = this.balance;
-    owner.transfer(this.balance);
-    FundWithdraw(balance);
   }
 }

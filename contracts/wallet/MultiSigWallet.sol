@@ -1,4 +1,4 @@
-pragma solidity ^0.4.11;
+pragma solidity ^0.4.15;
 
 /// @title Multisignature wallet - Allows multiple parties to agree on transactions before execution.
 /// @author Stefan George - <stefan.george@consensys.net>
@@ -178,13 +178,13 @@ contract MultiSigWallet {
   /// @param transactionId Transaction ID.
   function executeTransaction(uint transactionId) public notExecuted(transactionId) {
     if (isConfirmed(transactionId)) {
-      Transaction tx = transactions[transactionId];
-      tx.executed = true;
-      if (tx.destination.call.value(tx.value)(tx.data)) {
+      Transaction txn = transactions[transactionId];
+      txn.executed = true;
+      if (txn.destination.call.value(txn.value)(txn.data)) {
         Execution(transactionId);
       } else {
         ExecutionFailure(transactionId);
-        tx.executed = false;
+        txn.executed = false;
       }
     }
   }

@@ -4,7 +4,7 @@ contract Ownable {
   address public owner;
 
   // Event
-  event OwnershipChanged(address indexed newOwner, address indexed oldOwner);
+  event OwnershipChanged(address indexed oldOwner, address indexed newOwner);
 
   // Modifier
   modifier onlyOwner {
@@ -22,8 +22,7 @@ contract Ownable {
    */
   function transferOwnership(address newOwner) onlyOwner {
     require(newOwner != address(0));
-    var oldOwner = owner;
+    OwnershipChanged(owner, newOwner);
     owner = newOwner;
-    OwnershipChanged(newOwner, oldOwner);
   }
 }

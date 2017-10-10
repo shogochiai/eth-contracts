@@ -12,6 +12,11 @@ contract Registry is Ownable {
   event Registered(bytes32 indexed _id, address indexed _address, address indexed _sender);
   event Unregistered(bytes32 indexed _id);
 
+  /// @dev contructor
+  function Registry(address _owner) {
+    owner = _owner;
+  }
+
   // Methods
 
   /// @dev Registers contract in registry.

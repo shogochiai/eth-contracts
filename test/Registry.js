@@ -1,6 +1,7 @@
 import assertThrows from "./helpers/assertThrows";
 import { namehash } from "./helpers/utils";
 
+let RegistryFactory = artifacts.require("./registry/registryFactory.sol");
 let Registry = artifacts.require("./registry/Registry.sol");
 
 contract('Registry', function(accounts) {
@@ -8,11 +9,27 @@ contract('Registry', function(accounts) {
     let registry;
 
     before(async function() {
-      registry = await Registry.new();
+      const registryFactory = await RegistryFactory.new();
+      const registryReceipt = await registryFactory.create(accounts[0]);
+      registry = Registry.at(registryReceipt.logs[0].args._address);
+    });
+
+    it('should set owner properly', async function(){
+      assert.equal(await registry.owner(), accounts[0]);
     });
 
     it('should not allow to register other than owner', async function(){
       assertThrows(registry.register(namehash('microsoft.eth'), registry.address, { from: accounts[1] }));
+    });
+  });
+
+  describe('register and unregister', async function() {
+    let registry;
+
+    before(async function() {
+      const registryFactory = await RegistryFactory.new();
+      const registryReceipt = await registryFactory.create(accounts[0]);
+      registry = Registry.at(registryReceipt.logs[0].args._address);
     });
 
     it('should allow to register', async function(){

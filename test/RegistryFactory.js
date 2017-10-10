@@ -50,7 +50,7 @@ contract('RegistryFactory', function(accounts) {
 
     it('should anyone to create Registry contract', async function() {
       let fee = web3.toWei(0, 'ether');
-      let receipt = await factory.create({value: fee}); // with zero fee
+      let receipt = await factory.create(accounts[0], {value: fee}); // with zero fee
       assert.equal(receipt.logs.length, 1);
       assert.equal(receipt.logs[0].event, 'ContractCreated');
       assert.equal(receipt.logs[0].args._sender, accounts[0]);
@@ -62,6 +62,11 @@ contract('RegistryFactory', function(accounts) {
       // registry address from event
       let registryAddress = receipt.logs[0].args._address;
       let registryContract = Registry.at(registryAddress);
+
+      // check owner of registry contract
+      const registryOwner = await registryContract.owner();
+      console.log(registryOwner, accounts[0]);
+      assert.equal(registryOwner, accounts[0]);
     });
 
     it('should not allow to create with lesser fees', async function() {
@@ -74,7 +79,7 @@ contract('RegistryFactory', function(accounts) {
       assert.equal(feeReceipt.logs[0].event, 'FeeChanged');
       assert.equal(feeReceipt.logs[0].args.newFee.toString(), newFee.toString());
 
-      assertThrows(factory.create({value: fee}));
+      assertThrows(factory.create(accounts[0], {value: fee}));
     });
 
     it('should allow to create with more or same fees', async function() {
@@ -87,7 +92,7 @@ contract('RegistryFactory', function(accounts) {
       assert.equal(feeReceipt.logs[0].event, 'FeeChanged');
       assert.equal(feeReceipt.logs[0].args.newFee.toString(), newFee.toString());
 
-      let receipt = await factory.create({value: newFee});
+      let receipt = await factory.create(accounts[0], {value: newFee});
       assert.equal(receipt.logs.length, 1);
       assert.equal(receipt.logs[0].event, 'ContractCreated');
       assert.equal(receipt.logs[0].args._sender, accounts[0]);
@@ -116,7 +121,7 @@ contract('RegistryFactory', function(accounts) {
     });
 
     it('should allow owner to withdraw fund', async function() {
-      assertThrows(factory.create());
+      assertThrows(factory.create(accounts[0]));
 
       // get account balance
       let accountBalance = web3.eth.getBalance(accounts[0]);
@@ -129,7 +134,7 @@ contract('RegistryFactory', function(accounts) {
       ];
       for (let i = 0; i < testData.length; i++) {
         // create contract with fee 1 ETH
-        let createReceipt = await factory.create(testData[i]);
+        let createReceipt = await factory.create(testData[i].from, testData[i]);
         assert.equal(createReceipt.logs.length, 1);
         assert.equal(createReceipt.logs[0].event, 'ContractCreated');
 
@@ -154,9 +159,9 @@ contract('RegistryFactory', function(accounts) {
     });
 
     it('should not allow other to withdraw fund', async function() {
-      assertThrows(factory.create());
+      assertThrows(factory.create(accounts[0]));
 
-      let createReceipt = await factory.create({value: web3.toWei(1, 'ether')});
+      let createReceipt = await factory.create(accounts[0], {value: web3.toWei(1, 'ether')});
       assert.equal(createReceipt.logs.length, 1);
       assert.equal(createReceipt.logs[0].event, 'ContractCreated');
 

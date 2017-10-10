@@ -17,17 +17,10 @@ module.exports = async function(deployer) {
   const registryFactory = await RegistryFactory.deployed();
 
   // Create registry contract
-  const registryReceipt = await registryFactory.create();
-  const registryContract = Registry.at(registryReceipt.logs[0].args._address);
+  // const registryReceipt = await registryFactory.create();
+  // const registryContract = Registry.at(registryReceipt.logs[0].args._address);
 
   // Deploy multisig wallet factory
   await deployer.deploy(MultiSigWalletFactory);
   const multisigWalletFactory = await MultiSigWalletFactory.deployed();
-
-  // Logs
-  console.log("============================================================");
-  console.log("Registry factory address: ", registryFactory.address);
-  console.log("Registry address: ", registryContract.address);
-  console.log("Multisig wallet factory address: ", multisigWalletFactory.address);
-  console.log("============================================================");
 };

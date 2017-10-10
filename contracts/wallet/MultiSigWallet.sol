@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.17;
 
 /// @title Multisignature wallet - Allows multiple parties to agree on transactions before execution.
 /// @author Stefan George - <stefan.george@consensys.net>
@@ -78,7 +78,7 @@ contract MultiSigWallet {
   }
 
   /// @dev Fallback function allows to deposit ether.
-  function() payable {
+  function() payable public {
     if (msg.value > 0) {
       Deposit(msg.sender, msg.value);
     }
@@ -178,7 +178,7 @@ contract MultiSigWallet {
   /// @param transactionId Transaction ID.
   function executeTransaction(uint transactionId) public notExecuted(transactionId) {
     if (isConfirmed(transactionId)) {
-      Transaction txn = transactions[transactionId];
+      Transaction storage txn = transactions[transactionId];
       txn.executed = true;
       if (txn.destination.call.value(txn.value)(txn.data)) {
         Execution(transactionId);

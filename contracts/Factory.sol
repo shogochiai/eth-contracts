@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.17;
 
 import "./mixin/Ownable.sol";
 import "./mixin/PaidContract.sol";

@@ -65,7 +65,6 @@ contract('RegistryFactory', function(accounts) {
 
       // check owner of registry contract
       const registryOwner = await registryContract.owner();
-      console.log(registryOwner, accounts[0]);
       assert.equal(registryOwner, accounts[0]);
     });
 

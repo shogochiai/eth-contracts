@@ -10,7 +10,7 @@
   "dependencies": {
     "ethereumjs-testrpc": "^4.1.2",
     "ethereumjs-util": "^5.1.2",
-    "truffle": "^3.4.9"
+    "truffle": "^4.0.0-beta.2"
   },
   "devDependencies": {
     "babel-polyfill": "^6.26.0",

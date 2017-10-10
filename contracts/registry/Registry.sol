@@ -1,4 +1,4 @@
-pragma solidity ^0.4.15;
+pragma solidity ^0.4.17;
 
 import "../mixin/Ownable.sol";
 
@@ -13,7 +13,7 @@ contract Registry is Ownable {
   event Unregistered(bytes32 indexed _id);
 
   /// @dev contructor
-  function Registry(address _owner) {
+  function Registry(address _owner) public {
     owner = _owner;
   }
 
@@ -22,21 +22,21 @@ contract Registry is Ownable {
   /// @dev Registers contract in registry.
   /// @param _id of contract.
   /// @param _address of contract.
-  function register(bytes32 _id, address _address) onlyOwner {
+  function register(bytes32 _id, address _address) onlyOwner public {
     addressMap[_id] = _address;
     Registered(_id, _address, msg.sender);
   }
 
   /// @dev Unregisters contract in registry.
   /// @param _id of contract.
-  function unregister(bytes32 _id) onlyOwner {
+  function unregister(bytes32 _id) onlyOwner public {
     delete addressMap[_id];
     Unregistered(_id);
   }
 
   /// @dev Resolves id with contract address.
   /// @param _id of contract.
-  function resolve(bytes32 _id) constant returns (address _address) {
+  function resolve(bytes32 _id) view public returns (address _address) {
     _address = addressMap[_id];
   }
 }

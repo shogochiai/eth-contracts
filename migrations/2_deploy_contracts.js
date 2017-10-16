@@ -4,9 +4,11 @@ let Registry = artifacts.require("./registry/Registry.sol");
 let MultiSigWalletFactory = artifacts.require("./wallet/MultiSigWalletFactory.sol");
 let MultiSigWallet = artifacts.require("./wallet/MultiSigWallet.sol");
 
+// name hash
+const namehash = require('eth-ens-namehash');
+
 module.exports = async function(deployer) {
-  // Deploy migration contract
-  // await deployer.deploy(Migrations);
+  const account = web3.eth.accounts[0];
 
   //
   // Get registry from registry factory
@@ -14,13 +16,18 @@ module.exports = async function(deployer) {
 
   // Deploy registry factory
   await deployer.deploy(RegistryFactory);
-  const registryFactory = await RegistryFactory.deployed();
-
-  // Create registry contract
-  // const registryReceipt = await registryFactory.create();
-  // const registryContract = Registry.at(registryReceipt.logs[0].args._address);
-
   // Deploy multisig wallet factory
   await deployer.deploy(MultiSigWalletFactory);
-  const multisigWalletFactory = await MultiSigWalletFactory.deployed();
+
+  // Create registry contract
+  const registryFactory = RegistryFactory.at(RegistryFactory.address);
+  const registryReceipt = await registryFactory.create(account);
+  const registryContract = Registry.at(registryReceipt.logs[0].args._address);
+
+  // register contracts
+  await registryContract.register(namehash.hash('v1.simple-registry-factory.matic'), RegistryFactory.address);
+  await registryContract.register(namehash.hash('v1.multisig-wallet-factory.matic'), MultiSigWalletFactory.address);
+
+  // print registry contract address
+  console.log("Registry contract", registryContract.address);
 };

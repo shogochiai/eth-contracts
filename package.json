@@ -6,7 +6,7 @@
   "scripts": {
     "testrpc": "ganache-cli --mnemonic 'clock radar mass judge dismiss just intact mind resemble fringe diary casino' --gasLimit 150000000 --db ./db",
     "test": "truffle test",
-    "deploy": "truffle deploy",
+    "deploy": "truffle deploy"
   },
   "license": "MIT",
   "dependencies": {

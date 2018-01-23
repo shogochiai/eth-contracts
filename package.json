@@ -5,7 +5,8 @@
   "author": "Jaynti Kanani <jdkanani@gmail.com>",
   "scripts": {
     "testrpc": "ganache-cli --mnemonic 'clock radar mass judge dismiss just intact mind resemble fringe diary casino' --gasLimit 150000000 --db ./db",
-    "test": "truffle test"
+    "test": "truffle test",
+    "deploy": "truffle deploy",
   },
   "license": "MIT",
   "dependencies": {

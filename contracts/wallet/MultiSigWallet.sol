@@ -28,6 +28,7 @@ contract MultiSigWallet {
     uint value;
     bytes data;
     bool executed;
+    bool failed;
   }
 
   modifier onlyWallet() {
@@ -184,7 +185,7 @@ contract MultiSigWallet {
         Execution(transactionId);
       } else {
         ExecutionFailure(transactionId);
-        txn.executed = false;
+        txn.failed = true;
       }
     }
   }
@@ -218,7 +219,8 @@ contract MultiSigWallet {
       destination: destination,
       value: value,
       data: data,
-      executed: false
+      executed: false,
+      failed: false
     });
     transactionCount += 1;
     Submission(transactionId);

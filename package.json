@@ -5,10 +5,10 @@
   "author": "Jaynti Kanani <jdkanani@gmail.com>",
   "scripts": {
     "testrpc":
-      "ganache-cli --mnemonic 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat' --gasLimit 150000000 --db ./db",
+      "ganache-cli --networkId 4474 --mnemonic 'candy maple cake sugar pudding cream honey rich smooth crumble sweet treat' --gasLimit 150000000 --db ./db",
     "test": "truffle test",
     "compile": "truffle compile",
-    "deploy": "truffle deploy",
+    "deploy": "truffle migrate --network dev",
     "lint-contracts": "solhint -d contracts/**/*.sol",
     "lint-js": "eslint src/**/*.js test/**/*.js",
     "lint": "npm run lint-contracts && npm run lint-js"

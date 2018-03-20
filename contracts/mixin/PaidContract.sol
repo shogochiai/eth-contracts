@@ -1,6 +1,7 @@
-pragma solidity ^0.4.17;
+pragma solidity 0.4.19;
 
 import "./Ownable.sol";
+
 
 contract PaidContract is Ownable {
   // Fee
@@ -10,19 +11,11 @@ contract PaidContract is Ownable {
   event FeeChanged(uint newFee);
   event FundWithdraw(uint amount);
 
-  //
-  // Modifiers
-  //
-
   // Only if amount value is greater than/equals to decided fee
   modifier enoughPaid() {
     require(msg.value >= fee);
     _;
   }
-
-  //
-  // Methods
-  //
 
   /// @dev Set fee for contract creation
   /// @param _fee for contract creation

@@ -1,17 +1,12 @@
-require('babel-register');
-require('babel-polyfill');
+require('babel-register')
+require('babel-polyfill')
+
+const HDWalletProvider = require('truffle-hdwallet-provider')
+const wallets = require('./test/helpers/wallets.js')
 
 module.exports = {
   networks: {
-    ropsten: {
-      host: "localhost",
-      port: 8545,
-      network_id: 3 // official id of the ropsten network
-    },
-    development: {
-      host: "localhost",
-      port: 8545,
-      network_id: "*" // Match any network id
-    }
+    // See <http://truffleframework.com/docs/advanced/configuration>
+    // to customize your Truffle configuration!
   }
-};
+}
